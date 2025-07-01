@@ -1,0 +1,3 @@
+npm install express socket.io mssql cors
+
+node backend/app.js
