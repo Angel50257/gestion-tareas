@@ -1,0 +1,9 @@
+/* instalar dependencias*/
+npm install express socket.io mssql cors
+
+/* correr back y hacer pruebas */
+node backend/app.js
+
+/* instalar tokens */
+npm install bcrypt jsonwebtoken
+
