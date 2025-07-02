@@ -3,6 +3,7 @@ const router = express.Router();
 const tareaCtrl = require('../controllers/tareaController');
 const { verificarToken } = require('../middlewares/authMiddleware');
 
+router.get('/mis-tareas', verificarToken, tareaCtrl.listarPorUsuario); 
 router.get('/', verificarToken, tareaCtrl.listar);
 router.get('/:id', verificarToken, tareaCtrl.obtener);
 router.post('/', verificarToken, tareaCtrl.crear);

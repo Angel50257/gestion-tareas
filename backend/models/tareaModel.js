@@ -13,6 +13,19 @@ const TareaModel = {
 },
 
 
+// obotener tareas por user
+async obtenerPorUsuario(usuario_id) {
+    const result = await sql.query`
+        SELECT 
+            T.id, T.titulo, T.descripcion, T.estado, T.fecha_creacion
+        FROM Tareas T
+        WHERE T.usuario_id = ${usuario_id}
+    `;
+    return result.recordset;
+},
+
+
+
     async obtenerPorId(id) {
         const result = await sql.query`SELECT * FROM Tareas WHERE id = ${id}`;
         return result.recordset[0];
