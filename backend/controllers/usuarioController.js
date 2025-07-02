@@ -10,15 +10,25 @@ const SECRET_KEY = 'tu_clave_secreta_aqui';  // Mejor poner en .env
 module.exports = {
   // Listar todos los usuarios
   async listar(req, res) {
-    try {
-      const usuarios = await Usuario.obtenerTodos();
-      res.json(usuarios);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  },
+  try {
+    const usuarios = await Usuario.obtenerPorRol(2);  // Solo usuarios con rol_id = 2
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+},
 
-  // Obtener usuario por ID
+
+async obtenerPorRol(rol_id) {
+  const pool = await sql.connect();
+  const result = await pool.request()
+    .input('rol_id', sql.Int, rol_id)
+    .query('SELECT * FROM Usuarios WHERE rol_id = @rol_id');
+  return result.recordset;
+},
+
+
+  // Obtener usuario 
   async obtener(req, res) {
     try {
       const usuario = await Usuario.obtenerPorId(req.params.id);
@@ -29,15 +39,21 @@ module.exports = {
     }
   },
 
-  // Crear usuario (sin hashear, para uso interno)
+
+
+  // Crear usuario y ademas que sea solo rol 2
   async crear(req, res) {
-    try {
-      const id = await Usuario.crear(req.body);
-      res.status(201).json({ mensaje: 'Usuario creado', id });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  },
+  try {
+    // Forzar rol_id a 2
+    req.body.rol_id = 2;
+
+    const id = await Usuario.crear(req.body);
+    res.status(201).json({ mensaje: 'Usuario creado', id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+},
+
 
   // Actualizar usuario
   async actualizar(req, res) {

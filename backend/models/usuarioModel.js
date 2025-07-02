@@ -7,6 +7,15 @@ const UsuarioModel = {
     return result.recordset;
   },
 
+  async obtenerPorRol(rol_id) {
+    const pool = await sql.connect();
+    const result = await pool.request()
+      .input('rol_id', sql.Int, rol_id)
+      .query('SELECT * FROM Usuarios WHERE rol_id = @rol_id');
+    return result.recordset;
+  },
+
+
   // Obtener un usuario por ID
   async obtenerPorId(id) {
     const result = await sql.query`SELECT * FROM Usuarios WHERE id = ${id}`;
@@ -23,17 +32,36 @@ const UsuarioModel = {
     return result.recordset[0].id;
   },
 
-  // Actualizar un usuario existente
+  
   async actualizar(id, usuario) {
-    await sql.query`
-      UPDATE Usuarios 
-      SET nombre = ${usuario.nombre}, 
-          correo = ${usuario.correo}, 
-          contrasena = ${usuario.contrasena}, 
-          rol_id = ${usuario.rol_id}
-      WHERE id = ${id}
-    `;
-  },
+  const campos = [];
+  const inputs = [];
+
+  if (usuario.nombre !== undefined) {
+    campos.push(`nombre = @nombre`);
+    inputs.push({ name: 'nombre', type: sql.NVarChar, value: usuario.nombre });
+  }
+  if (usuario.correo !== undefined) {
+    campos.push(`correo = @correo`);
+    inputs.push({ name: 'correo', type: sql.NVarChar, value: usuario.correo });
+  }
+
+  if (campos.length === 0) {
+    // No hay datos para actualizar
+    return;
+  }
+
+  const setClause = campos.join(', ');
+
+  const pool = await sql.connect();
+  const request = pool.request();
+  inputs.forEach(input => {
+    request.input(input.name, input.type, input.value);
+  });
+  request.input('id', sql.Int, id);
+
+  await request.query(`UPDATE Usuarios SET ${setClause} WHERE id = @id`);
+},
 
   // Eliminar un usuario por ID
   async eliminar(id) {

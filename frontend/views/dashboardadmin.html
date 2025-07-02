@@ -2,34 +2,97 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel de Usuario</title>
+  <title>Panel de Administrador</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Bienvenido</h1>
-  <p>Estás autenticado. Tu rol es: <span id="rol"></span></p>
-  <button onclick="logout()">Cerrar sesión</button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="dashboardadmin.html">Sistema de Tareas</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUser">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarUser">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h2 class="mb-4 text-center">Bienvenido Administrador</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Tarjetas -->
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Administrar Usuarios</h5>
+            <p class="card-text">Crear, editar y eliminar usuarios registrados.</p>
+            <a href="adminusuarios.html" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Administrar Tareas</h5>
+            <p class="card-text">Gestiona todas las tareas del sistema.</p>
+            <a href="#" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Administrar Archivos</h5>
+            <p class="card-text">Gestiona archivos asociados a tareas.</p>
+            <a href="#" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Administrar Etiquetas</h5>
+            <p class="card-text">Crea y edita etiquetas para organizar tareas.</p>
+            <a href="#" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Ver Bitácora</h5>
+            <p class="card-text">Consulta acciones realizadas por los usuarios.</p>
+            <a href="#" class="btn btn-primary">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title">Editar Perfil</h5>
+            <p class="card-text">Modifica tus datos personales y credenciales.</p>
+            <a href="#" class="btn btn-secondary">Editar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const rolMap = {
-      1: 'Admin',
-      2: 'Usuario',
-      3: 'Invitado'
-    };
-
-    const rol_id = localStorage.getItem('rol_id');
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      alert("No has iniciado sesión.");
-      window.location.href = 'login.html';
-    } else {
-      document.getElementById('rol').innerText = rolMap[rol_id] || 'Desconocido';
-    }
-
     function logout() {
       localStorage.clear();
-      window.location.href = 'login.html';
+      window.location.href = "/views/login.html";
     }
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

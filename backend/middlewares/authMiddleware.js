@@ -1,10 +1,16 @@
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'tu_clave_secreta_aqui'; 
 
-function verificarToken(req, res, next) {
-  const token = req.headers['authorization'];
 
-  if (!token) return res.status(403).json({ mensaje: 'Token requerido' });
+function verificarToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  if (!authHeader) return res.status(403).json({ mensaje: 'Token requerido' });
+
+  // El token suele venir como "Bearer <token>", separa por espacio
+  const token = authHeader.split(' ')[1];
+
+  if (!token) return res.status(403).json({ mensaje: 'Token mal formado' });
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
@@ -14,6 +20,7 @@ function verificarToken(req, res, next) {
     res.status(401).json({ mensaje: 'Token inválido o expirado' });
   }
 }
+
 
 
 // Verifica que el usuario sea admin (rol_id === 1)
@@ -26,4 +33,7 @@ function soloAdmin(req, res, next) {
 }
 
 
-module.exports = verificarToken, soloAdmin;
+module.exports = {
+  verificarToken,
+  soloAdmin
+};
