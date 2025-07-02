@@ -1,10 +1,15 @@
 const Tarea = require('../models/tareaModel');
 
 const tareaController = {
-    async listar(req, res) {
-        const tareas = await Tarea.obtenerTodas();
-        res.json(tareas);
-    },
+            async listar(req, res) {
+        try {
+            const tareas = await Tarea.obtenerTodas();
+            res.json(tareas);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+        },
+
 
     async obtener(req, res) {
         const tarea = await Tarea.obtenerPorId(req.params.id);

@@ -8,7 +8,7 @@ const { registrarUsuario, loginUsuario } = require('../controllers/usuarioContro
 const { verificarToken } = require('../middlewares/authMiddleware');
 
 // router.get('/', usuarioController.listar);
-router.get('/', verificarToken, usuarioController.listar);
+router.get('/', usuarioController.listar);
 
 router.get('/:id', verificarToken, usuarioController.obtener);
 router.post('/', verificarToken, usuarioController.crear);

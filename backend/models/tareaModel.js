@@ -2,9 +2,16 @@ const sql = require('../database');
 
 const TareaModel = {
     async obtenerTodas() {
-        const result = await sql.query('SELECT * FROM Tareas');
-        return result.recordset;
-    },
+  const result = await sql.query(`
+    SELECT 
+      T.id, T.titulo, T.descripcion, T.estado, T.fecha_creacion,
+      U.nombre AS usuario_nombre, U.correo AS usuario_correo
+    FROM Tareas T
+    JOIN Usuarios U ON T.usuario_id = U.id
+  `);
+  return result.recordset;
+},
+
 
     async obtenerPorId(id) {
         const result = await sql.query`SELECT * FROM Tareas WHERE id = ${id}`;

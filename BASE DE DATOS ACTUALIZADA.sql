@@ -81,7 +81,7 @@ INSERT INTO Roles (nombre) VALUES ('admin'), ('usuario'), ('invitado');
 
 SELECT * FROM Usuarios;
 
-DELETE FROM Usuarios WHERE id = 9;
+DELETE FROM Usuarios WHERE id = 1;
 
 INSERT INTO Usuarios (nombre, correo, contrasena, rol_id)
 VALUES (

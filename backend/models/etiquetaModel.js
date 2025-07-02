@@ -7,9 +7,9 @@ const EtiquetaModel = {
     },
 
     getById: async (id) => {
-        const result = await sql.query`SELECT * FROM Etiquetas WHERE id = ${id}`;
-        return result.recordset[0];
-    },
+    const result = await sql.query`SELECT * FROM Etiquetas WHERE id = ${id}`;
+    return result.recordset[0];
+},
 
     create: async (nombre) => {
         const result = await sql.query`INSERT INTO Etiquetas (nombre) OUTPUT INSERTED.* VALUES (${nombre})`;

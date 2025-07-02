@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Etiqueta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-4">
+  <h2>Editar Etiqueta</h2>
+  <form id="formEditarEtiqueta">
+    <input type="hidden" id="etiquetaId" />
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input type="text" id="nombre" class="form-control" required autocomplete="off" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <button type="button" class="btn btn-secondary" onclick="volver()">Cancelar</button>
+  </form>
+</div>
+
+<script>
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('No has iniciado sesión');
+    window.location.href = 'login.html';
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) {
+    alert('ID de etiqueta no especificado');
+    window.location.href = 'adminetiquetas.html';
+  }
+
+  async function cargarEtiqueta() {
+    const res = await fetch(`/api/etiquetas/${id}`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+
+    if (!res.ok) {
+      alert('Error al cargar etiqueta');
+      window.location.href = 'adminetiquetas.html';
+      return;
+    }
+
+    const etiqueta = await res.json();
+    document.getElementById('etiquetaId').value = etiqueta.id;
+    document.getElementById('nombre').value = etiqueta.nombre;
+  }
+
+  cargarEtiqueta();
+
+  document.getElementById('formEditarEtiqueta').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombre').value.trim();
+    if (!nombre) return alert('Debe ingresar un nombre');
+
+    const res = await fetch(`/api/etiquetas/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify({ nombre })
+    });
+
+    const resultado = await res.json();
+    if (res.ok) {
+      alert('Etiqueta actualizada');
+      window.location.href = 'adminetiquetas.html';
+    } else {
+      alert(resultado.mensaje || 'Error al actualizar etiqueta');
+    }
+  });
+
+  function volver() {
+    window.location.href = 'adminetiquetas.html';
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
