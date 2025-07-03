@@ -47,7 +47,7 @@ exports.eliminarArchivo = async (req, res) => {
   res.json({ mensaje: 'Archivo eliminado' });
 };
 
-
+/* 
 exports.editarArchivo = async (req, res) => {
   const { id } = req.params;
   const archivoExistente = await ArchivoModel.obtenerPorId(id);
@@ -58,7 +58,34 @@ exports.editarArchivo = async (req, res) => {
 
   const actualizado = await ArchivoModel.editar(id, req.body);
   res.json(actualizado);
+}; */
+
+/* editar archivo nuevo */
+exports.editarArchivo = async (req, res) => {
+  const { id } = req.params;
+  const archivoExistente = await ArchivoModel.obtenerPorId(id);
+
+  if (!archivoExistente) {
+    return res.status(404).json({ mensaje: 'Archivo no encontrado' });
+  }
+
+  let datosActualizados = {
+    tarea_id: archivoExistente.tarea_id, // No se cambia
+    nombre_archivo: archivoExistente.nombre_archivo,
+    nombre_original: archivoExistente.nombre_original,
+    ruta_archivo: archivoExistente.ruta_archivo,
+  };
+
+  if (req.file) {
+    datosActualizados.nombre_archivo = req.file.filename;
+    datosActualizados.nombre_original = req.file.originalname;
+    datosActualizados.ruta_archivo = `/archivos/${req.file.filename}`;
+  }
+
+  const actualizado = await ArchivoModel.editar(id, datosActualizados);
+  res.json(actualizado);
 };
+
 
 
 exports.obtenerArchivosDelUsuario = async (req, res) => {

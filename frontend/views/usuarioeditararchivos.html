@@ -18,7 +18,7 @@
 <div class="container mt-4">
   <h2>Editar Archivo</h2>
 
-  <form id="formEditar">
+  <form id="formEditar" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="id" class="form-label">ID</label>
       <input type="text" class="form-control" id="id" readonly>
@@ -30,13 +30,13 @@
     </div>
 
     <div class="mb-3">
-      <label for="nombre_archivo" class="form-label">Nombre del Archivo</label>
-      <input type="text" class="form-control" id="nombre_archivo" required>
+      <label class="form-label">Archivo actual</label><br>
+      <a id="linkArchivo" href="#" download class="btn btn-outline-secondary btn-sm" target="_blank">Descargar archivo actual</a>
     </div>
 
     <div class="mb-3">
-      <label for="ruta_archivo" class="form-label">Ruta del Archivo</label>
-      <input type="text" class="form-control" id="ruta_archivo" required>
+      <label for="archivo" class="form-label">Nuevo archivo (opcional)</label>
+      <input type="file" class="form-control" id="archivo" name="archivo" />
     </div>
 
     <div class="mb-3">
@@ -76,9 +76,11 @@
 
       document.getElementById('id').value = archivo.id;
       document.getElementById('tarea_id').value = archivo.tarea_id;
-      document.getElementById('nombre_archivo').value = archivo.nombre_archivo;
-      document.getElementById('ruta_archivo').value = archivo.ruta_archivo;
       document.getElementById('fecha_subida').value = new Date(archivo.fecha_subida).toLocaleString();
+
+      const link = document.getElementById('linkArchivo');
+      link.href = archivo.ruta_archivo;
+      link.textContent = archivo.nombre_original;
 
     } catch (error) {
       console.error(error);
@@ -90,20 +92,16 @@
   document.getElementById('formEditar').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const datos = {
-      tarea_id: document.getElementById('tarea_id').value,
-      nombre_archivo: document.getElementById('nombre_archivo').value,
-      ruta_archivo: document.getElementById('ruta_archivo').value
-    };
+    const form = document.getElementById('formEditar');
+    const formData = new FormData(form);
 
     try {
       const res = await fetch(`/api/archivos/${archivoId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token
         },
-        body: JSON.stringify(datos)
+        body: formData
       });
 
       if (!res.ok) throw new Error('Error al actualizar');

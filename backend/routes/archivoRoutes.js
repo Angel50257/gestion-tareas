@@ -15,7 +15,11 @@ router.get('/:id', verificarToken, archivoCtrl.obtenerArchivoPorId);
 /* crear archivo nuevo */
 router.post('/', verificarToken, upload.single('archivo'), archivoCtrl.crearArchivo);
 
-router.put('/:id', verificarToken, archivoCtrl.editarArchivo);
+// router.put('/:id', verificarToken, archivoCtrl.editarArchivo);
+
+// editar archivo
+router.put('/:id', verificarToken, upload.single('archivo'), archivoCtrl.editarArchivo);
+
 router.delete('/:id', verificarToken, archivoCtrl.eliminarArchivo);
 
 module.exports = router;

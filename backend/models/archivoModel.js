@@ -20,20 +20,20 @@ const ArchivoModel = {
   return result.recordset[0];
 },
 
-
-        async editar(id, archivo) {
-        const result = await sql.query`
-          UPDATE Archivos
-          SET 
-            tarea_id = ${archivo.tarea_id},
-            nombre_archivo = ${archivo.nombre_archivo},
-            ruta_archivo = ${archivo.ruta_archivo},
-            fecha_subida = GETDATE()
-          OUTPUT INSERTED.*
-          WHERE id = ${id}
-        `;
-        return result.recordset[0];
-      },
+/* nueva funcion para editar */
+            async editar(id, archivo) {
+      const result = await sql.query`
+        UPDATE Archivos
+        SET 
+          nombre_archivo = ${archivo.nombre_archivo},
+          nombre_original = ${archivo.nombre_original},
+          ruta_archivo = ${archivo.ruta_archivo},
+          fecha_subida = GETDATE()
+        OUTPUT INSERTED.*
+        WHERE id = ${id}
+      `;
+      return result.recordset[0];
+    },
 
   async eliminar(id) {
     await sql.query`DELETE FROM Archivos WHERE id = ${id}`;
