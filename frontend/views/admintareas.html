@@ -37,7 +37,9 @@
         <th>Estado</th>
         <th>Fecha</th>
         <th>Usuario</th>
+        <th>Etiqueta(s)</th>
         <th>Acciones</th>
+        <th>Acciones Etiquetas</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -55,9 +57,7 @@
 
   async function cargarTareas() {
     const res = await fetch('/api/tareas', {
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
+      headers: { Authorization: 'Bearer ' + token }
     });
 
     if (!res.ok) {
@@ -66,6 +66,31 @@
     }
 
     tareasOriginales = await res.json();
+
+    // Para cada tarea, obtener sus etiquetas con nombre real
+    await Promise.all(tareasOriginales.map(async (t) => {
+      const etiquetasRes = await fetch(`/api/tareaetiquetas/${t.id}`, {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      if (etiquetasRes.ok) {
+        const relaciones = await etiquetasRes.json();
+        // Obtener nombres reales de las etiquetas consultando API de etiquetas por ID
+        const nombres = [];
+        for (const rel of relaciones) {
+          const etiquetaRes = await fetch(`/api/etiquetas/${rel.etiqueta_id}`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          if (etiquetaRes.ok) {
+            const etiqueta = await etiquetaRes.json();
+            nombres.push(etiqueta.nombre);
+          }
+        }
+        t.etiquetas = nombres;
+      } else {
+        t.etiquetas = [];
+      }
+    }));
+
     mostrarTareas(tareasOriginales);
   }
 
@@ -74,6 +99,15 @@
     tbody.innerHTML = '';
 
     tareas.forEach(t => {
+      const etiquetasTexto = t.etiquetas.length > 0 ? t.etiquetas.join(', ') : 'Sin etiquetas';
+
+      let botonesEtiquetas = '';
+      if (t.etiquetas.length > 0) {
+        botonesEtiquetas = `<button class="btn btn-sm btn-warning" onclick="editarEtiqueta(${t.id})">Editar Etiqueta</button>`;
+      } else {
+        botonesEtiquetas = `<button class="btn btn-sm btn-success" onclick="agregarEtiqueta(${t.id})">Agregar Etiqueta</button>`;
+      }
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${t.id}</td>
@@ -82,10 +116,12 @@
         <td>${t.estado}</td>
         <td>${new Date(t.fecha_creacion).toLocaleDateString()}</td>
         <td>${t.usuario_nombre} (${t.usuario_correo})</td>
+        <td>${etiquetasTexto}</td>
         <td>
           <button class="btn btn-sm btn-primary me-2" onclick="editarTarea(${t.id})">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarTarea(${t.id})">Eliminar</button>
         </td>
+        <td>${botonesEtiquetas}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -107,8 +143,7 @@
   }
 
   async function eliminarTarea(id) {
-    const confirmacion = confirm("¿Estás seguro de eliminar esta tarea?");
-    if (!confirmacion) return;
+    if (!confirm("¿Estás seguro de eliminar esta tarea?")) return;
 
     const res = await fetch(`/api/tareas/${id}`, {
       method: 'DELETE',
@@ -122,6 +157,14 @@
     if (res.ok) {
       cargarTareas();
     }
+  }
+
+  function agregarEtiqueta(tareaId) {
+    window.location.href = `adminagregaretiquetastarea.html?tarea_id=${tareaId}`;
+  }
+
+  function editarEtiqueta(tareaId) {
+    window.location.href = `admineditaretiquetatarea.html?tarea_id=${tareaId}`;
   }
 
   function logout() {
