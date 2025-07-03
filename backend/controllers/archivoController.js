@@ -35,3 +35,15 @@ exports.editarArchivo = async (req, res) => {
 };
 
 
+exports.obtenerArchivosDelUsuario = async (req, res) => {
+  const usuarioId = req.usuario.id; 
+  try {
+    const archivos = await ArchivoModel.obtenerPorUsuario(usuarioId);
+    res.json(archivos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener archivos del usuario' });
+  }
+};
+
+

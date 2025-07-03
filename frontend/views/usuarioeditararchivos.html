@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Archivo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="dashboardusuario.html">Sistema de Tareas</a>
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h2>Editar Archivo</h2>
+
+  <form id="formEditar">
+    <div class="mb-3">
+      <label for="id" class="form-label">ID</label>
+      <input type="text" class="form-control" id="id" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="tarea_id" class="form-label">Tarea ID</label>
+      <input type="text" class="form-control" id="tarea_id" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="nombre_archivo" class="form-label">Nombre del Archivo</label>
+      <input type="text" class="form-control" id="nombre_archivo" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="ruta_archivo" class="form-label">Ruta del Archivo</label>
+      <input type="text" class="form-control" id="ruta_archivo" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="fecha_subida" class="form-label">Fecha de Subida</label>
+      <input type="text" class="form-control" id="fecha_subida" readonly>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a href="usuarioarchivos.html" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+
+<script>
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('No has iniciado sesión');
+    window.location.href = 'login.html';
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const archivoId = params.get('id');
+
+  if (!archivoId) {
+    alert('ID de archivo no proporcionado');
+    window.location.href = 'usuarioarchivos.html';
+  }
+
+  async function cargarArchivo() {
+    try {
+      const res = await fetch(`/api/archivos/${archivoId}`, {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+
+      if (!res.ok) throw new Error('No se pudo obtener el archivo');
+
+      const archivo = await res.json();
+
+      document.getElementById('id').value = archivo.id;
+      document.getElementById('tarea_id').value = archivo.tarea_id;
+      document.getElementById('nombre_archivo').value = archivo.nombre_archivo;
+      document.getElementById('ruta_archivo').value = archivo.ruta_archivo;
+      document.getElementById('fecha_subida').value = new Date(archivo.fecha_subida).toLocaleString();
+
+    } catch (error) {
+      console.error(error);
+      alert('Error al cargar los datos del archivo');
+      window.location.href = 'usuarioarchivos.html';
+    }
+  }
+
+  document.getElementById('formEditar').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const datos = {
+      tarea_id: document.getElementById('tarea_id').value,
+      nombre_archivo: document.getElementById('nombre_archivo').value,
+      ruta_archivo: document.getElementById('ruta_archivo').value
+    };
+
+    try {
+      const res = await fetch(`/api/archivos/${archivoId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        },
+        body: JSON.stringify(datos)
+      });
+
+      if (!res.ok) throw new Error('Error al actualizar');
+
+      alert('Archivo actualizado correctamente');
+      window.location.href = 'usuarioarchivos.html';
+    } catch (error) {
+      console.error(error);
+      alert('No se pudo actualizar el archivo');
+    }
+  });
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+
+  cargarArchivo();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

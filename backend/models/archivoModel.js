@@ -36,7 +36,21 @@ const ArchivoModel = {
 
   async eliminar(id) {
     await sql.query`DELETE FROM Archivos WHERE id = ${id}`;
-  }
+  },
+
+
+  /* archivos por user */
+  async obtenerPorUsuario(usuarioId) {
+  const result = await sql.query`
+    SELECT A.*
+    FROM Archivos A
+    INNER JOIN Tareas T ON A.tarea_id = T.id
+    WHERE T.usuario_id = ${usuarioId}
+  `;
+  return result.recordset;
+}
+
+
 };
 
 module.exports = ArchivoModel;
