@@ -41,27 +41,32 @@ const UsuarioModel = {
     campos.push(`nombre = @nombre`);
     inputs.push({ name: 'nombre', type: sql.NVarChar, value: usuario.nombre });
   }
+
   if (usuario.correo !== undefined) {
     campos.push(`correo = @correo`);
     inputs.push({ name: 'correo', type: sql.NVarChar, value: usuario.correo });
   }
 
-  if (campos.length === 0) {
-    // No hay datos para actualizar
-    return;
+  if (usuario.contrasena !== undefined) {
+    campos.push(`contrasena = @contrasena`);
+    inputs.push({ name: 'contrasena', type: sql.NVarChar, value: usuario.contrasena });
   }
 
-  const setClause = campos.join(', ');
+  if (campos.length === 0) return;
 
+  const setClause = campos.join(', ');
   const pool = await sql.connect();
   const request = pool.request();
+
   inputs.forEach(input => {
     request.input(input.name, input.type, input.value);
   });
+
   request.input('id', sql.Int, id);
 
   await request.query(`UPDATE Usuarios SET ${setClause} WHERE id = @id`);
 },
+
 
   // Eliminar un usuario por ID
   async eliminar(id) {

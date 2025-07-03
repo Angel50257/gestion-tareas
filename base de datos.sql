@@ -64,6 +64,11 @@ CREATE TABLE Archivos (
 );
 GO
 
+-- modificando tabla archivos
+ALTER TABLE Archivos
+ADD nombre_original NVARCHAR(255) NOT NULL DEFAULT '';
+
+
 -- Bitácora de acciones del sistema
 CREATE TABLE Bitacora (
     id INT PRIMARY KEY IDENTITY(1,1),
@@ -79,9 +84,12 @@ GO
 INSERT INTO Roles (nombre) VALUES ('admin'), ('usuario'), ('invitado');
 
 
+SELECT * FROM TareaEtiquetas;
 SELECT * FROM Usuarios;
+SELECT * FROM Archivos;
+SELECT * FROM Tareas;
 
-DELETE FROM Usuarios WHERE id = 1;
+DELETE FROM Usuarios WHERE id = 9;
 
 INSERT INTO Usuarios (nombre, correo, contrasena, rol_id)
 VALUES (
@@ -91,3 +99,32 @@ VALUES (
   1
 );
 
+-- insertar etiquetas
+INSERT INTO Etiquetas (nombre) VALUES 
+('Importante'),
+('Personal'),
+('Trabajo'),
+('Reunión'),
+('Entrega'),
+('Investigación'),
+('Desarrollo'),
+('Corrección'),
+('Prioridad Alta'),
+('Prioridad Media'),
+('Prioridad Baja'),
+('Revisión'),
+('En Espera'),
+('Finalizado');
+
+
+
+
+DECLARE @usuarioId INT = 8; 
+
+SELECT A.*
+FROM Archivos A
+INNER JOIN Tareas T ON A.tarea_id = T.id
+WHERE T.usuario_id = @usuarioId;
+
+
+SELECT * FROM Tareas WHERE usuario_id = 8; -- reemplaza 8 por el id que usas

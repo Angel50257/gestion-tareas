@@ -19,6 +19,34 @@ module.exports = {
 },
 
 
+  // Actualizar perfil usando el token
+  async actualizarPerfil(req, res) {
+    const idUsuario = req.usuario.id; // Obtenido desde el token JWT (middleware)
+    const { nombre, correo, contrasena } = req.body;
+
+    const datos = {};
+    if (nombre) datos.nombre = nombre;
+    if (correo) datos.correo = correo;
+
+    if (contrasena) {
+      try {
+        const hashed = await bcrypt.hash(contrasena, 10);
+        datos.contrasena = hashed;
+      } catch (err) {
+        return res.status(500).json({ mensaje: 'Error al encriptar contraseña' });
+      }
+    }
+
+    try {
+      await Usuario.actualizar(idUsuario, datos);
+      res.json({ mensaje: 'Perfil actualizado correctamente' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ mensaje: 'Error al actualizar perfil' });
+    }
+  },
+
+
 async obtenerPorRol(rol_id) {
   const pool = await sql.connect();
   const result = await pool.request()
@@ -160,3 +188,6 @@ async obtenerPorRol(rol_id) {
     }
   }
 };
+
+
+

@@ -6,10 +6,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="adminarchivos.html">Sistema de Tareas</a>
+    <a class="navbar-brand" href="dashboardadmin.html">Sistema de Tareas</a>
     <ul class="navbar-nav ms-auto">
       <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Cerrar sesión</a></li>
     </ul>
@@ -19,34 +18,34 @@
 <div class="container mt-4">
   <h2>Editar Archivo</h2>
 
-  <form id="formEditarArchivo">
+  <form id="formEditar" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="id" class="form-label">ID</label>
-      <input type="text" class="form-control" id="id" readonly />
+      <input type="text" class="form-control" id="id" readonly>
     </div>
 
     <div class="mb-3">
-      <label for="tarea_id" class="form-label">ID Tarea</label>
-      <input type="text" class="form-control" id="tarea_id" readonly />
+      <label for="tarea_id" class="form-label">Tarea ID</label>
+      <input type="text" class="form-control" id="tarea_id" readonly>
     </div>
 
     <div class="mb-3">
-      <label for="nombre_archivo" class="form-label">Nombre Archivo</label>
-      <input type="text" class="form-control" id="nombre_archivo" required />
+      <label class="form-label">Archivo actual</label><br>
+      <a id="linkArchivo" href="#" download class="btn btn-outline-secondary btn-sm" target="_blank">Descargar archivo actual</a>
     </div>
 
     <div class="mb-3">
-      <label for="ruta_archivo" class="form-label">Ruta Archivo</label>
-      <input type="text" class="form-control" id="ruta_archivo" required />
+      <label for="archivo" class="form-label">Nuevo archivo (opcional)</label>
+      <input type="file" class="form-control" id="archivo" name="archivo" />
     </div>
 
     <div class="mb-3">
-      <label for="fecha_subida" class="form-label">Fecha Subida</label>
-      <input type="text" class="form-control" id="fecha_subida" readonly />
+      <label for="fecha_subida" class="form-label">Fecha de Subida</label>
+      <input type="text" class="form-control" id="fecha_subida" readonly>
     </div>
 
     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    <a href="adminarchivos.html" class="btn btn-secondary ms-2">Cancelar</a>
+    <a href="adminarchivos.html" class="btn btn-secondary">Cancelar</a>
   </form>
 </div>
 
@@ -57,12 +56,11 @@
     window.location.href = 'login.html';
   }
 
-  // Obtener ID desde query string
-  const urlParams = new URLSearchParams(window.location.search);
-  const archivoId = urlParams.get('id');
+  const params = new URLSearchParams(window.location.search);
+  const archivoId = params.get('id');
 
   if (!archivoId) {
-    alert('ID de archivo no especificado');
+    alert('ID de archivo no proporcionado');
     window.location.href = 'adminarchivos.html';
   }
 
@@ -71,66 +69,55 @@
       const res = await fetch(`/api/archivos/${archivoId}`, {
         headers: { Authorization: 'Bearer ' + token }
       });
-      if (!res.ok) {
-        alert('Error al cargar archivo');
-        window.location.href = 'adminarchivos.html';
-        return;
-      }
+
+      if (!res.ok) throw new Error('No se pudo obtener el archivo');
+
       const archivo = await res.json();
 
       document.getElementById('id').value = archivo.id;
       document.getElementById('tarea_id').value = archivo.tarea_id;
-      document.getElementById('nombre_archivo').value = archivo.nombre_archivo;
-      document.getElementById('ruta_archivo').value = archivo.ruta_archivo;
       document.getElementById('fecha_subida').value = new Date(archivo.fecha_subida).toLocaleString();
+
+      const link = document.getElementById('linkArchivo');
+      link.href = archivo.ruta_archivo;
+      link.textContent = archivo.nombre_original;
 
     } catch (error) {
       console.error(error);
-      alert('Error al cargar archivo');
+      alert('Error al cargar los datos del archivo');
       window.location.href = 'adminarchivos.html';
     }
   }
 
-  async function guardarCambios(event) {
-    event.preventDefault();
+  document.getElementById('formEditar').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    const datos = {
-      tarea_id: document.getElementById('tarea_id').value, // aunque no editable, lo mandamos para que no falle la query
-      nombre_archivo: document.getElementById('nombre_archivo').value,
-      ruta_archivo: document.getElementById('ruta_archivo').value
-    };
+    const form = document.getElementById('formEditar');
+    const formData = new FormData(form);
 
     try {
       const res = await fetch(`/api/archivos/${archivoId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token
         },
-        body: JSON.stringify(datos)
+        body: formData
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        alert('Error al guardar cambios: ' + (errorData.mensaje || JSON.stringify(errorData)));
-        return;
-      }
+      if (!res.ok) throw new Error('Error al actualizar');
 
       alert('Archivo actualizado correctamente');
       window.location.href = 'adminarchivos.html';
-
     } catch (error) {
       console.error(error);
-      alert('Error al guardar cambios');
+      alert('No se pudo actualizar el archivo');
     }
-  }
+  });
 
   function logout() {
     localStorage.clear();
     window.location.href = 'login.html';
   }
-
-  document.getElementById('formEditarArchivo').addEventListener('submit', guardarCambios);
 
   cargarArchivo();
 </script>

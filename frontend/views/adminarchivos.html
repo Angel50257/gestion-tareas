@@ -24,7 +24,7 @@
       <tr>
         <th>ID</th>
         <th>ID Tarea</th>
-        <th>Nombre Archivo</th>
+        <th>Nombre Archivo (descargable)</th>
         <th>Ruta Archivo</th>
         <th>Fecha Subida</th>
         <th>Acciones</th>
@@ -53,7 +53,6 @@
       }
 
       const archivos = await res.json();
-
       const tbody = document.querySelector('#tablaArchivos tbody');
       tbody.innerHTML = '';
 
@@ -62,7 +61,7 @@
         tr.innerHTML = `
           <td>${a.id}</td>
           <td>${a.tarea_id}</td>
-          <td>${a.nombre_archivo}</td>
+          <td><a href="/archivos/${a.nombre_archivo}" download="${a.nombre_original}">${a.nombre_original}</a></td>
           <td>${a.ruta_archivo}</td>
           <td>${new Date(a.fecha_subida).toLocaleString()}</td>
           <td>
@@ -80,7 +79,6 @@
   }
 
   function editarArchivo(id) {
-    // Llevar a la página de edición pasando el id por query string
     window.location.href = `admineditararchivos.html?id=${id}`;
   }
 
@@ -90,16 +88,16 @@
     try {
       const res = await fetch(`/api/archivos/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: 'Bearer ' + token }
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
       });
 
       const data = await res.json();
 
       alert(data.mensaje || 'Archivo eliminado');
 
-      if (res.ok) {
-        cargarArchivos(); // recarga la tabla
-      }
+      if (res.ok) cargarArchivos();
 
     } catch (error) {
       console.error(error);
