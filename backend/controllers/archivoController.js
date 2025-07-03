@@ -1,4 +1,5 @@
 const ArchivoModel = require('../models/archivoModel');
+const path = require('path');
 
 exports.obtenerArchivos = async (req, res) => {
   const archivos = await ArchivoModel.obtenerTodos();
@@ -11,10 +12,35 @@ exports.obtenerArchivoPorId = async (req, res) => {
   res.json(archivo);
 };
 
+/* 
 exports.crearArchivo = async (req, res) => {
   const nuevo = await ArchivoModel.crear(req.body);
   res.status(201).json(nuevo);
+}; */
+
+
+/* nueva función para ingresar archivo */
+exports.crearArchivo = async (req, res) => {
+  try {
+    const archivo = req.file; // gracias a multer
+    const { tarea_id } = req.body;
+
+    const nuevo = await ArchivoModel.crear({
+      tarea_id,
+      nombre_archivo: archivo.filename, // nombre con el que se guarda
+      nombre_original: archivo.originalname, // nombre original
+      ruta_archivo: `/archivos/${archivo.filename}`
+    });
+
+    res.status(201).json(nuevo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al subir archivo' });
+  }
 };
+
+
+
 
 exports.eliminarArchivo = async (req, res) => {
   await ArchivoModel.eliminar(req.params.id);

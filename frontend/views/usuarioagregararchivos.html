@@ -9,22 +9,17 @@
 <div class="container mt-4">
   <h2>Agregar Archivo</h2>
 
-  <form id="formArchivo">
+  <form id="formArchivo" enctype="multipart/form-data">
     <div class="mb-3">
       <label for="tareaSelect" class="form-label">Tarea</label>
-      <select class="form-select" id="tareaSelect" required>
+      <select class="form-select" id="tareaSelect" name="tarea_id" required>
         <option value="">Seleccione una tarea</option>
       </select>
     </div>
 
     <div class="mb-3">
-      <label for="nombreArchivo" class="form-label">Nombre del Archivo</label>
-      <input type="text" class="form-control" id="nombreArchivo" required />
-    </div>
-
-    <div class="mb-3">
-      <label for="rutaArchivo" class="form-label">Ruta del Archivo</label>
-      <input type="text" class="form-control" id="rutaArchivo" required />
+      <label for="archivo" class="form-label">Seleccionar archivo</label>
+      <input type="file" class="form-control" id="archivo" name="archivo" required />
     </div>
 
     <button type="submit" class="btn btn-primary">Guardar</button>
@@ -55,21 +50,19 @@
     });
   }
 
-  // Crear archivo
+  // Crear archivo (usando FormData)
   document.getElementById('formArchivo').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const tarea_id = document.getElementById('tareaSelect').value;
-    const nombre_archivo = document.getElementById('nombreArchivo').value;
-    const ruta_archivo = document.getElementById('rutaArchivo').value;
+    const form = document.getElementById('formArchivo');
+    const formData = new FormData(form);
 
     const res = await fetch('/api/archivos', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + token
       },
-      body: JSON.stringify({ tarea_id, nombre_archivo, ruta_archivo })
+      body: formData
     });
 
     if (res.ok) {

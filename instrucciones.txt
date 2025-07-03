@@ -2,6 +2,8 @@
 npm install express socket.io mssql cors
 /* instalar tokens */
 npm install bcrypt jsonwebtoken
+/* para archivos instalar multer */
+npm install multer
 /* correr back y hacer pruebas */
 node backend/app.js
 

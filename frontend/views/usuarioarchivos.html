@@ -70,7 +70,7 @@
       tr.innerHTML = `
         <td>${a.id}</td>
         <td>${a.tarea_id}</td>
-        <td>${a.nombre_archivo}</td>
+        <td><a href="/archivos/${a.nombre_archivo}" download>${a.nombre_original}</a></td>
         <td>${a.ruta_archivo}</td>
         <td>${new Date(a.fecha_subida).toLocaleDateString()}</td>
         <td>

@@ -12,13 +12,14 @@ const ArchivoModel = {
   },
 
   async crear(archivo) {
-    const result = await sql.query`
-      INSERT INTO Archivos (tarea_id, nombre_archivo, ruta_archivo)
-      OUTPUT INSERTED.*
-      VALUES (${archivo.tarea_id}, ${archivo.nombre_archivo}, ${archivo.ruta_archivo})
-    `;
-    return result.recordset[0];
-  },
+  const result = await sql.query`
+    INSERT INTO Archivos (tarea_id, nombre_archivo, nombre_original, ruta_archivo)
+    OUTPUT INSERTED.*
+    VALUES (${archivo.tarea_id}, ${archivo.nombre_archivo}, ${archivo.nombre_original}, ${archivo.ruta_archivo})
+  `;
+  return result.recordset[0];
+},
+
 
         async editar(id, archivo) {
         const result = await sql.query`

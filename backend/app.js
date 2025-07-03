@@ -28,6 +28,10 @@ app.use('/api/tareaetiquetas', require('./routes/tareaEtiquetaRoutes')); // ✅ 
 app.use(express.static(path.join(__dirname, '../frontend/public')));
 app.use('/views', express.static(path.join(__dirname, '../frontend/views')));
 
+// RUTA DE LOS ARCHIVOS
+app.use('/archivos', express.static(path.join(__dirname, 'archivos')));
+
+
 // WebSocket
 require('./websockets/socketHandler')(io);
 
