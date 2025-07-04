@@ -178,9 +178,9 @@ async obtenerPorRol(rol_id) {
 
       const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
 
-      return res.json({ mensaje: 'Login exitoso', token, rol_id: usuario.rol_id });
+      return res.json({ mensaje: 'Login exitoso', token, rol_id: usuario.rol_id, nombre: usuario.nombre });
     } else {
-      return res.json({ mensaje: 'Login exitoso', rol_id: usuario.rol_id });
+      return res.json({ mensaje: 'Login exitoso', rol_id: usuario.rol_id, nombre: usuario.nombre });
     }
 
     } catch (err) {

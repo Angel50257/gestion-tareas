@@ -1,8 +1,8 @@
 const sql = require('mssql');
 
 const config = {
-    user: 'usuario_final',
-    password: '123456',
+    user: 'coder',
+    password: 'coder',
     server: 'localhost',
     database: 'SistemaTareas',
     options: {

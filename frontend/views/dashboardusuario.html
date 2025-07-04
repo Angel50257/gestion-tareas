@@ -22,7 +22,7 @@
   </nav>
 
   <div class="container mt-4">
-    <h2 class="text-center mb-4">Bienvenido Usuario</h2>
+    <h2 class="text-center mb-4">Bienvenido <span id="nombreUsuario">Usuario</span></h2>
     <div class="row row-cols-1 row-cols-md-2 g-4">
       <!-- Tarjetas -->
       <div class="col">
@@ -68,10 +68,18 @@
   </div>
 
   <script>
+    // Mostrar nombre en Dashboard
+    const nombre = localStorage.getItem('nombre');
+    if (nombre) {
+      document.getElementById('nombreUsuario').textContent = nombre;
+    }
+
+    // Función para cerrar sesión
     function logout() {
       localStorage.clear();
       window.location.href = "/views/login.html";
     }
+
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

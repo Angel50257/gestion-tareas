@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Editar Etiqueta de Tarea</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://rsms.me/inter/inter.css');
+    html { font-family: 'Inter', sans-serif; }
+    body { background-color: #f9fafb; }
+  </style>
 </head>
-<body>
-  <div class="container mt-4">
-    <h2>Editar Etiqueta de Tarea</h2>
+<body class="flex flex-col min-h-screen">
 
-    <form id="formEditarEtiqueta">
-      <!-- ID de la tarea -->
-      <div class="mb-3">
-        <label for="tarea_id" class="form-label">ID de la Tarea</label>
-        <input type="number" id="tarea_id" name="tarea_id" class="form-control" readonly>
+  <!-- Contenedor principal -->
+  <main class="flex-grow max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+    <h2 class="text-2xl font-bold mb-6 text-center">Editar Etiqueta de Tarea</h2>
+
+    <form id="formEditarEtiqueta" class="space-y-4">
+      <!-- ID Tarea -->
+      <div>
+        <label for="tarea_id" class="block text-sm font-medium text-gray-700 mb-1">ID de la Tarea</label>
+        <input type="number" id="tarea_id" name="tarea_id" readonly
+          class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed" />
       </div>
 
-      <!-- Etiqueta actual (oculta) -->
-      <input type="hidden" id="etiqueta_id" name="etiqueta_id">
+      <!-- etiqueta_id oculto -->
+      <input type="hidden" id="etiqueta_id" name="etiqueta_id" />
 
-      <!-- Seleccionar nueva etiqueta -->
-      <div class="mb-3">
-        <label for="nueva_etiqueta_id" class="form-label">Nueva Etiqueta</label>
-        <select id="nueva_etiqueta_id" name="nueva_etiqueta_id" class="form-select" required>
+      <!-- Nueva etiqueta -->
+      <div>
+        <label for="nueva_etiqueta_id" class="block text-sm font-medium text-gray-700 mb-1">Nueva Etiqueta</label>
+        <select id="nueva_etiqueta_id" name="nueva_etiqueta_id" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
           <option value="">Seleccione una nueva etiqueta</option>
         </select>
       </div>
 
-      <button type="submit" class="btn btn-primary">Actualizar Etiqueta</button>
+      <button type="submit"
+        class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+        Actualizar Etiqueta
+      </button>
     </form>
-  </div>
+  </main>
 
   <script>
     const token = localStorage.getItem('token');
@@ -65,9 +77,7 @@
         return;
       }
 
-      // Tomamos la primera relación
-      const etiquetaId = relaciones[0].etiqueta_id;
-      document.getElementById('etiqueta_id').value = etiquetaId;
+      document.getElementById('etiqueta_id').value = relaciones[0].etiqueta_id;
     }
 
     async function cargarNuevasEtiquetas() {
@@ -121,6 +131,5 @@
     cargarNuevasEtiquetas();
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
